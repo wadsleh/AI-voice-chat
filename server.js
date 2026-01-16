@@ -7,6 +7,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use(express.static('public'));
+
 // إعداد الاتصال بالذكاء الاصطناعي
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
