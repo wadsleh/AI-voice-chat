@@ -1,36 +1,29 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { Configuration, OpenAIApi } = require("openai");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
 app.use(express.static('public'));
 
-// إعداد الاتصال بالذكاء الاصطناعي
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
+// تأكد أنك أضفت المفتاح في إعدادات Render باسم GEMINI_API_KEY
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// استقبال الرسائل
 app.post('/api/chat', async (req, res) => {
   try {
     const { message } = req.body;
+    const model = genAI.getGenerativeModel({ model: "gemini-pro"});
     
-    const response = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: message }],
-    });
+    const result = await model.generateContent(message);
+    const response = await result.response;
+    const text = response.text();
 
-    const reply = response.data.choices[0].message.content;
-    res.json({ reply });
-    
+    res.json({ reply: text });
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).send('حدث خطأ في الاتصال');
+    res.status(500).send('Error connecting to AI');
   }
 });
 
