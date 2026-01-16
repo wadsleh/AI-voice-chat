@@ -29,5 +29,5 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
-const PORT = "https://ai-voice-chat-bd3z.onrender.com";
+const PORT = process.env.MURTADA;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
