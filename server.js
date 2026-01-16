@@ -4,6 +4,8 @@ require('dotenv').config();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
+console.log("My Key Status:", process.env.GEMINI_API_KEY ? "موجود" : "مفقود أو فارغ");
+
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
