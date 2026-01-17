@@ -10,16 +10,15 @@ app.use(express.static('public'));
 const GROQ_API_KEY = process.env.MURTA;
 
 app.post('/api/chat', async (req, res) => {
-  // نستقبل اللغة المختارة من الواجهة
-  const { message, image, language } = req.body;
+  const { message, language } = req.body;
 
   try {
     let userContent = [{ type: "text", text: message }];
     
-    // تحديد تعليمات النظام بناءً على الزر الذي ضغطته
+    // تعليمات النظام: الرد بنفس لغة المستخدم
     const systemInstruction = language === 'ar-SA' 
-        ? "أنت MVC AI، مساعد ذكي ومحترف. يجب أن ترد باللغة العربية دائماً وبشكل واضح ومفيد."
-        : "You are MVC AI, a smart and professional assistant. You must reply in English.";
+        ? "أنت MVC AI، مساعد ذكي. رد باللغة العربية دائماً."
+        : "You are MVC AI, a smart assistant. Reply in English.";
 
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
@@ -32,7 +31,6 @@ app.post('/api/chat', async (req, res) => {
                 { role: "system", content: systemInstruction },
                 { role: "user", content: userContent }
             ],
-            // نستخدم الموديل الجوكر المستقر والقوي جداً في اللغات
             model: "llama-3.3-70b-versatile",
             temperature: 0.7
         })
@@ -40,12 +38,10 @@ app.post('/api/chat', async (req, res) => {
 
     const data = await response.json();
     if (data.error) throw new Error(data.error.message);
-    
     res.json({ reply: data.choices[0].message.content });
 
   } catch (error) {
-    console.error("Server Error:", error);
-    res.status(500).json({ reply: "نواجه ضغطاً على السيرفر، حاول مرة أخرى." });
+    res.status(500).json({ reply: "Server Busy, Try again." });
   }
 });
 
