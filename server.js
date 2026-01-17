@@ -30,8 +30,9 @@ app.post('/api/chat', async (req, res) => {
                 { role: "system", content: "You are a helpful assistant. Always reply in Arabic." },
                 { role: "user", content: message }
             ],
-            // موديل Llama 3 السريع جداً
-            model: "llama3-8b-8192",
+            // موديل Llama 3.3 الجديد: ذكي جداً وسريع ويدعم العربية بطلاقة
+model: "llama-3.3-70b-versatile",
+
             temperature: 0.7
         })
     });
