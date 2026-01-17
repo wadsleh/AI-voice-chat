@@ -30,13 +30,14 @@
 
         /* --- الهيدر --- */
         header {
-            padding: 20px 25px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .brand-container { display: flex; align-items: center; gap: 12px; }
+        .brand-container { display: flex; align-items: center; gap: 10px; }
+        
         .app-logo { 
             height: 50px; 
             width: auto; 
@@ -44,7 +45,9 @@
             object-fit: contain; 
             display: block; 
         }
+
         .brand-name { font-size: 1.3rem; font-weight: 600; color: #E3E3E3; letter-spacing: 0.5px; }
+        
         .user-avatar { 
             width: 35px; height: 35px; background: #FF8A65; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
@@ -89,7 +92,6 @@
             flex: 1; padding: 20px; padding-bottom: 140px; 
             overflow-y: auto; display: none; flex-direction: column; gap: 20px;
         }
-
         .message { max-width: 90%; line-height: 1.6; font-size: 1rem; position: relative; }
         .user-message {
             align-self: flex-end; background-color: #282A2C; color: white;
@@ -100,19 +102,11 @@
             padding: 0; padding-left: 15px;
         }
         .bot-message::before { content: '✨'; display: inline-block; margin-left: 8px; }
+        .chat-image { max-width: 100%; border-radius: 12px; margin-top: 10px; border: 1px solid #444; }
         .bot-message code { background: #2D2E30; padding: 2px 5px; border-radius: 4px; color: #A8C7FA; font-family: monospace; }
-        
-        /* تنسيق الصورة داخل الشات */
-        .chat-image {
-            max-width: 100%;
-            border-radius: 12px;
-            margin-top: 10px;
-            border: 1px solid #444;
-        }
 
-        /* --- صندوق معاينة الصورة قبل الإرسال --- */
         #preview-container {
-            position: fixed; bottom: 85px; left: 20px;
+            position: fixed; bottom: 90px; left: 20px;
             background: #2C2C2E; padding: 8px; border-radius: 12px;
             display: none; z-index: 1001; border: 1px solid #444;
         }
@@ -127,11 +121,12 @@
         /* --- شريط الإدخال --- */
         #input-area {
             position: fixed; bottom: 20px; left: 15px; right: 15px;
-            background-color: #1E1F20; border-radius: 35px; padding: 8px 15px;
-            display: flex; align-items: center; gap: 8px; z-index: 1000;
+            background-color: #1E1F20; border-radius: 35px;
+            padding: 10px 15px; /* حشو مريح */
+            display: flex; align-items: center; gap: 10px; z-index: 1000;
+            min-height: 60px; /* ارتفاع ثابت يشبه Gemini */
         }
 
-        /* زر اللغة وزر الرفع (يسار) */
         #langBtn {
             background: #333; color: #fff; border: 1px solid #555; padding: 8px 12px;
             border-radius: 20px; font-size: 0.9rem; font-weight: bold; cursor: pointer;
@@ -143,18 +138,28 @@
             font-size: 1.3rem; cursor: pointer; padding: 5px;
             display: flex; align-items: center; justify-content: center;
         }
-        .attach-btn:hover { color: #E3E3E3; }
 
         #textInput { flex: 1; background: transparent; border: none; color: white; font-size: 1.1rem; padding: 5px; outline: none; }
         
-        /* المايك وزر الإرسال (يمين) */
+        /* --- تعديل المايك (كبير وواضح مثل Gemini) --- */
         .icon-btn { 
-            width: 40px; height: 40px; border-radius: 50%; border: none; background: transparent; 
-            color: white; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer;
+            width: 45px; height: 45px; /* حجم كبير ومريح لللمس */
+            border-radius: 50%; border: none; background: transparent; 
+            color: white; font-size: 1.2rem; 
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            transition: background 0.2s;
         }
-        #micBtn { background: #2C2C2E; width: 45px; height: 45px; border-radius: 50%; justify-content: center; }
-        #micBtn.recording { color: #ff4d4d; }
-        #sendBtn { display: none; color: #A8C7FA; }
+        
+        #micBtn { 
+            background: #2C2C2E; /* خلفية مميزة للمايك */
+            width: 50px; height: 50px; /* أكبر قليلاً ليكون العنصر الأبرز */
+            border-radius: 50%;
+        }
+        
+        #micBtn:active { background: #3c3c3e; }
+        #micBtn.recording { color: #ff4d4d; background: #3c2020; }
+        
+        #sendBtn { display: none; color: #A8C7FA; width: 50px; height: 50px; }
 
     </style>
 </head>
@@ -218,9 +223,8 @@
 
         let isFirstMessage = true;
         let currentLang = 'en-US';
-        let currentImageBase64 = null; // لتخزين الصورة
+        let currentImageBase64 = null;
 
-        // --- إدارة الملفات ---
         fileBtn.addEventListener('click', () => fileInput.click());
 
         fileInput.addEventListener('change', (e) => {
@@ -231,7 +235,6 @@
                     currentImageBase64 = event.target.result;
                     previewImage.src = currentImageBase64;
                     previewContainer.style.display = 'block';
-                    // إظهار زر الإرسال فوراً عند اختيار صورة
                     micBtn.style.display = 'none'; sendBtn.style.display = 'flex';
                 };
                 reader.readAsDataURL(file);
@@ -246,7 +249,6 @@
                 micBtn.style.display = 'flex'; sendBtn.style.display = 'none';
             }
         });
-        // ---------------------
 
         langBtn.addEventListener('click', () => {
             if (currentLang === 'en-US') {
@@ -275,90 +277,4 @@
         }
 
         async function sendMessage(text) {
-            if (!text && !currentImageBase64) return;
-            hideWelcome();
-
-            const userDiv = document.createElement('div');
-            userDiv.classList.add('message', 'user-message');
-            userDiv.textContent = text;
-
-            // عرض الصورة في شات المستخدم إذا وجدت
-            if (currentImageBase64) {
-                const img = document.createElement('img');
-                img.src = currentImageBase64;
-                img.classList.add('chat-image');
-                userDiv.appendChild(img);
-            }
-
-            chatContainer.appendChild(userDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            // إعداد البيانات للإرسال
-            const payload = { 
-                message: text, 
-                image: currentImageBase64, // نرسل الصورة للسيرفر
-                language: currentLang 
-            };
-
-            // تنظيف الحقول
-            textInput.value = '';
-            const tempImage = currentImageBase64; // نسخة احتياطية
-            currentImageBase64 = null;
-            previewContainer.style.display = 'none';
-            fileInput.value = '';
-            micBtn.style.display = 'flex'; sendBtn.style.display = 'none';
-
-            try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await response.json();
-                
-                const botDiv = document.createElement('div');
-                botDiv.classList.add('message', 'bot-message');
-                botDiv.innerHTML = marked.parse(data.reply);
-                chatContainer.appendChild(botDiv);
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-
-                speak(data.reply);
-
-            } catch (error) {
-                const errDiv = document.createElement('div');
-                errDiv.classList.add('message', 'bot-message');
-                errDiv.textContent = "Error processing request.";
-                chatContainer.appendChild(errDiv);
-            }
-        }
-
-        sendBtn.addEventListener('click', () => sendMessage(textInput.value));
-        textInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(textInput.value); });
-
-        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        
-        micBtn.addEventListener('click', () => {
-            recognition.lang = currentLang;
-            window.speechSynthesis.cancel();
-            if (micBtn.classList.contains('recording')) recognition.stop();
-            else recognition.start();
-        });
-
-        recognition.onstart = () => micBtn.style.color = '#ff4d4d';
-        recognition.onend = () => micBtn.style.color = 'white';
-        recognition.onresult = (e) => {
-            const transcript = e.results[0][0].transcript;
-            textInput.value = transcript;
-            sendMessage(transcript);
-        };
-
-        function speak(text) {
-            window.speechSynthesis.cancel(); 
-            const cleanText = text.replace(/[*#`_]/g, '');
-            const u = new SpeechSynthesisUtterance(cleanText);
-            u.lang = currentLang;
-            window.speechSynthesis.speak(u);
-        }
-    </script>
-</body>
-</html>
+            if (!text && !currentImageBase6
