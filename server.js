@@ -5,28 +5,28 @@ require('dotenv').config();
 const app = express();
 app.use(cors());
 
-// ⚠️ مهم جداً: زيادة سعة البيانات لاستقبال الصور الكبيرة (Base64)
+// زيادة سعة البيانات لاستقبال الصور الكبيرة (Base64)
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static('public'));
 
-// جلب المفتاح من متغيرات البيئة (حسب تسميتك في Render)
+// جلب المفتاح من متغيرات البيئة
 const GROQ_API_KEY = process.env.MURTA;
 
 app.post('/api/chat', async (req, res) => {
   try {
     const { message, image } = req.body;
     
-    // تجهيز محتوى الرسالة (نص + صورة إن وجدت)
+    // تجهيز محتوى الرسالة
     let userContent = [{ type: "text", text: message }];
     
+    // إذا وجدنا صورة، نضيفها
     if (image) {
         userContent.push({
             type: "image_url",
-            image_url: { url: image } // الصورة تأتي بصيغة Base64
+            image_url: { url: image }
         });
     }
 
-    // الاتصال بـ Groq
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -37,15 +37,16 @@ app.post('/api/chat', async (req, res) => {
             messages: [
                 { 
                     role: "system", 
-                    content: "You are MVC AI, a helpful and smart assistant. Reply in the same language the user uses." 
+                    content: "You are MVC AI. Helpful, smart, and concise. Reply in the user's language." 
                 },
                 { 
                     role: "user", 
                     content: userContent 
                 }
             ],
-            // ⚠️ استخدام موديل الرؤية الجديد والسريع (لتفادي أخطاء Decommissioned)
-            model: "llama-3.2-11b-vision-preview",
+            // ⚠️ التعديل الهام: استخدام موديل Llama 3.3 القوي والمستقر
+            // ملاحظة: إذا واجهت مشكلة في الصور مع هذا الموديل، جرب "llama-3.2-90b-vision-preview"
+            model: "llama-3.3-70b-versatile", 
             temperature: 0.7
         })
     });
@@ -53,15 +54,16 @@ app.post('/api/chat', async (req, res) => {
     const data = await response.json();
 
     if (data.error) {
+        // طباعة الخطأ في الكونسول لمعرفته
+        console.error("Groq Error:", data.error);
         throw new Error(data.error.message);
     }
     
-    // إرسال الرد للواجهة
     res.json({ reply: data.choices[0].message.content });
 
   } catch (error) {
     console.error("Server Error:", error);
-    res.status(500).json({ reply: "آسف، حدث خطأ في النظام أو الموديل مشغول حالياً." });
+    res.status(500).json({ reply: "حدث خطأ في النظام (قد يكون الموديل مشغولاً، حاول مجدداً)." });
   }
 });
 
