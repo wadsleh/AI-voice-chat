@@ -43,8 +43,8 @@ app.post('/api/chat', async (req, res) => {
                     content: userContent 
                 }
             ],
-            // ⚠️ استخدام موديل يدعم الرؤية (Vision)
-            model: "llama-3.2-90b-vision-preview", 
+            // موديل الرؤية الجديد (11 مليار بارامتر) - سريع جداً ويدعم الصور
+model: "llama-3.2-11b-vision-preview",
             temperature: 0.7
         })
     });
