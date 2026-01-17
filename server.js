@@ -4,15 +4,27 @@ require('dotenv').config();
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+// زيادة سعة البيانات لاستقبال الصور (مهم جداً)
+app.use(express.json({ limit: '50mb' }));
 app.use(express.static('public'));
 
 const GROQ_API_KEY = process.env.MURTA;
 
 app.post('/api/chat', async (req, res) => {
   try {
-    const { message } = req.body; // نركز على النص حالياً لضمان الاستقرار
+    const { message, image } = req.body;
     
+    // إعداد محتوى الرسالة
+    let userContent = [{ type: "text", text: message }];
+    
+    // إذا أرسل المستخدم صورة، نضيفها للطلب
+    if (image) {
+        userContent.push({
+            type: "image_url",
+            image_url: { url: image }
+        });
+    }
+
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -22,14 +34,17 @@ app.post('/api/chat', async (req, res) => {
         body: JSON.stringify({
             messages: [
                 { 
-                    // ⚠️ شخصية البوت الاحترافية
                     role: "system", 
-                    content: "You are MVC AI, a highly professional assistant created by Murtada. You are fluent in both English and Arabic. If the user speaks English, reply in perfect English. If the user speaks Arabic, reply in clear Arabic. Be concise, smart, and helpful." 
+                    content: "You are MVC AI. Helpful and smart. Reply in the user's language." 
                 },
-                { role: "user", content: message }
+                { 
+                    role: "user", 
+                    content: userContent 
+                }
             ],
-            // ✅ الموديل الوحيد المستقر والفعال حالياً (الأقوى في النصوص)
-            model: "llama-3.3-70b-versatile",
+            // ⚠️ ملاحظة: نستخدم موديل 11b لأنه يدعم الصور وسريع
+            // إذا توقف هذا الموديل مستقبلاً، جرب: "llama-3.2-90b-vision-preview"
+            model: "llama-3.2-11b-vision-preview",
             temperature: 0.7
         })
     });
@@ -42,7 +57,8 @@ app.post('/api/chat', async (req, res) => {
 
   } catch (error) {
     console.error("Server Error:", error);
-    res.status(500).json({ reply: "System update in progress. Please try again in a moment." });
+    // رسالة واضحة في حال توقف الموديل
+    res.status(500).json({ reply: "حدث خطأ في قراءة الصورة (قد يكون الموديل متوقفاً مؤقتاً)." });
   }
 });
 
