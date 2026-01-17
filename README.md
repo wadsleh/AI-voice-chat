@@ -21,7 +21,4 @@ An intelligent chat application that supports Voice-to-Voice interaction powered
 ## 🚀 طريقة التشغيل | How to Run
 
 1. **نسخ المشروع (Clone):**
-   ```bash
-   git clone [https://github.com/YourUsername/ai-voice-chat.git](https://github.com/YourUsername/ai-voice-chat.git)
-   cd ai-voice-chat
- 
+   https://ai-voice-chat-bd3z.onrender.com
