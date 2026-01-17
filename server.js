@@ -9,12 +9,12 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // ⚠️ ضع مفتاحك هنا مباشرة بين علامات التنصيص
-const genAI = new GoogleGenerativeAI("AIzaSyBaOm0UcZHH86t9GmyJNKIIm8zzjwmZmd0");
+const genAI = new GoogleGenerativeAI("AIzaSyDbt5_tRRfc4Rc8XhR1gttirdqz5h-fWeY");
 
 app.post('/api/chat', async (req, res) => {
   try {
     const { message } = req.body;
-    const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
     const result = await model.generateContent(message);
     const response = await result.response;
     const text = response.text();
