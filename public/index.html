@@ -277,4 +277,80 @@
         }
 
         async function sendMessage(text) {
-            if (!text && !currentImageBase6
+            if (!text && !currentImageBase64) return;
+            hideWelcome();
+
+            const userDiv = document.createElement('div');
+            userDiv.classList.add('message', 'user-message');
+            userDiv.textContent = text;
+            if (currentImageBase64) {
+                const img = document.createElement('img');
+                img.src = currentImageBase64;
+                img.classList.add('chat-image');
+                userDiv.appendChild(img);
+            }
+            chatContainer.appendChild(userDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            const payload = { message: text, image: currentImageBase64, language: currentLang };
+
+            textInput.value = '';
+            currentImageBase64 = null;
+            previewContainer.style.display = 'none';
+            fileInput.value = '';
+            micBtn.style.display = 'flex'; sendBtn.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                
+                const botDiv = document.createElement('div');
+                botDiv.classList.add('message', 'bot-message');
+                botDiv.innerHTML = marked.parse(data.reply);
+                chatContainer.appendChild(botDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                speak(data.reply);
+
+            } catch (error) {
+                const errDiv = document.createElement('div');
+                errDiv.classList.add('message', 'bot-message');
+                errDiv.textContent = "Error processing request.";
+                chatContainer.appendChild(errDiv);
+            }
+        }
+
+        sendBtn.addEventListener('click', () => sendMessage(textInput.value));
+        textInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(textInput.value); });
+
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        
+        micBtn.addEventListener('click', () => {
+            recognition.lang = currentLang;
+            window.speechSynthesis.cancel();
+            if (micBtn.classList.contains('recording')) recognition.stop();
+            else recognition.start();
+        });
+
+        recognition.onstart = () => micBtn.style.color = '#ff4d4d';
+        recognition.onend = () => micBtn.style.color = 'white';
+        recognition.onresult = (e) => {
+            const transcript = e.results[0][0].transcript;
+            textInput.value = transcript;
+            sendMessage(transcript);
+        };
+
+        function speak(text) {
+            window.speechSynthesis.cancel(); 
+            const cleanText = text.replace(/[*#`_]/g, '');
+            const u = new SpeechSynthesisUtterance(cleanText);
+            u.lang = currentLang;
+            window.speechSynthesis.speak(u);
+        }
+    </script>
+</body>
+</html>
