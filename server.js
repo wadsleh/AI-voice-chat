@@ -7,18 +7,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// ⚠️ ضع مفتاح Groq الجديد هنا (يبدأ بـ gsk_)
+// جلب المفتاح من متغيرات البيئة (اسم المفتاح الذي وضعته في Render)
 const GROQ_API_KEY = process.env.MURTA;
-
-// هذا السطر سيطبع في الـ Logs هل المفتاح موجود أم لا
-console.log("Is Key Loaded?", GROQ_API_KEY ? "YES ✅" : "NO ❌");
-
 
 app.post('/api/chat', async (req, res) => {
   try {
     const { message } = req.body;
 
-    // الاتصال بسيرفرات Groq
+    // الاتصال بموديل Groq
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -27,12 +23,15 @@ app.post('/api/chat', async (req, res) => {
         },
         body: JSON.stringify({
             messages: [
-                { role: "system", content: "You are a helpful assistant. Always reply in Arabic." },
+                // توجيه ذكي: الموديل سيرد بنفس لغة المستخدم
+                { 
+                    role: "system", 
+                    content: "You are a helpful and smart AI assistant like Gemini. You are versatile and can speak all languages. Always reply in the same language the user is speaking to you. Keep your answers concise." 
+                },
                 { role: "user", content: message }
             ],
-            // موديل Llama 3.3 الجديد: ذكي جداً وسريع ويدعم العربية بطلاقة
-model: "llama-3.3-70b-versatile",
-
+            // استخدام أحدث وأذكى موديل متاح حالياً
+            model: "llama-3.3-70b-versatile",
             temperature: 0.7
         })
     });
@@ -48,7 +47,7 @@ model: "llama-3.3-70b-versatile",
 
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ reply: "حدث خطأ في الخادم." });
+    res.status(500).json({ reply: "حدث خطأ في الاتصال بالسيرفر." });
   }
 });
 
