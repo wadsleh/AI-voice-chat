@@ -35,11 +35,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            max-width: 1000px; margin: 0 auto; width: 100%; box-sizing: border-box;
         }
 
         .header-title { font-size: 1.1rem; font-weight: 500; color: var(--text-secondary); }
         
-        /* أيقونة المستخدم (الحرف الأول) */
         .user-avatar { 
             width: 32px; height: 32px; 
             background: linear-gradient(135deg, #FF6F61, #D83A56);
@@ -57,6 +57,7 @@
             justify-content: center;
             padding: 20px;
             padding-bottom: 100px;
+            max-width: 800px; margin: 0 auto; width: 100%; box-sizing: border-box;
         }
 
         .greeting-text {
@@ -70,9 +71,12 @@
         }
 
         .sub-greeting {
-            font-size: 2.5rem; /* تصغير الخط قليلاً للموبايل */
-            font-weight: 600;
-            color: #444746;
+            font-size: 2.5rem; font-weight: 600; color: #444746;
+        }
+
+        @media (max-width: 480px) {
+            .greeting-text { font-size: 2.5rem; }
+            .sub-greeting { font-size: 1.8rem; }
         }
 
         .suggestions {
@@ -91,8 +95,9 @@
             cursor: pointer;
             transition: 0.2s;
             display: flex; align-items: center; gap: 8px;
+            border: 1px solid transparent;
         }
-        .chip:hover { background-color: #2D2E30; }
+        .chip:hover { background-color: #2D2E30; border-color: #444; }
         .chip i { color: var(--accent-blue); }
 
         /* --- الشات --- */
@@ -104,6 +109,7 @@
             display: none;
             flex-direction: column;
             gap: 20px;
+            max-width: 900px; margin: 0 auto; width: 100%; box-sizing: border-box;
         }
 
         .message { max-width: 95%; line-height: 1.6; font-size: 1rem; position: relative; }
@@ -124,6 +130,8 @@
             padding: 0;
             padding-right: 15px;
         }
+        
+        .chat-image { max-width: 100%; border-radius: 12px; margin-top: 10px; border: 1px solid #333; }
 
         /* تنسيقات Markdown */
         .bot-message h1, .bot-message h2 { color: var(--text-primary); margin-top: 15px; font-size: 1.2rem; }
@@ -132,12 +140,34 @@
         .bot-message code { background: #2D2E30; padding: 2px 6px; border-radius: 4px; font-family: monospace; color: #A8C7FA; }
         .bot-message pre { background: #1E1F20; padding: 15px; border-radius: 12px; overflow-x: auto; border: 1px solid #444; margin-top: 10px; }
 
+        /* --- صندوق معاينة الصورة (تمت إعادته) --- */
+        #preview-container {
+            position: fixed;
+            bottom: 90px; /* فوق الشريط مباشرة */
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2C2C2E;
+            padding: 8px;
+            border-radius: 12px;
+            display: none;
+            z-index: 999;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        #preview-image { max-width: 100px; max-height: 100px; border-radius: 8px; }
+        #remove-file {
+            position: absolute; top: -8px; right: -8px; background: #ff5546; color: white;
+            border-radius: 50%; width: 22px; height: 22px; text-align: center;
+            line-height: 22px; cursor: pointer; border: 2px solid #2C2C2E; font-size: 12px;
+        }
+
         /* --- شريط الإدخال --- */
         #input-area {
             position: fixed;
             bottom: 20px;
-            left: 15px;
-            right: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 700px;
             background-color: var(--surface-color);
             border-radius: 30px;
             padding: 10px 15px;
@@ -145,6 +175,8 @@
             align-items: center;
             gap: 10px;
             z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            box-sizing: border-box;
         }
 
         #textInput { flex: 1; background: transparent; border: none; color: var(--text-primary); font-size: 1rem; padding: 5px; outline: none; }
@@ -176,6 +208,11 @@
 
     <div id="chat-container"></div>
 
+    <div id="preview-container">
+        <span id="remove-file">×</span>
+        <img id="preview-image" src="" alt="preview">
+    </div>
+
     <div id="input-area">
         <button class="plus-btn" id="fileBtn">+</button>
         <input type="file" id="fileInput" accept="image/*" style="display: none;">
@@ -185,26 +222,19 @@
     </div>
 
     <script>
-        // --- 1. كود التعرف على الاسم (الذكاء الاجتماعي) ---
+        // --- إدارة الأسماء ---
         let userName = localStorage.getItem('mvc_username');
-
-        // إذا لم يكن هناك اسم محفوظ، اطلبه من المستخدم
         if (!userName) {
             userName = prompt("Welcome! What is your name? / ما هو اسمك؟") || "Friend";
-            localStorage.setItem('mvc_username', userName); // حفظ الاسم
+            localStorage.setItem('mvc_username', userName);
         }
-
-        // تحديث الشاشة بالاسم
         updateNameDisplay();
 
         function updateNameDisplay() {
-            // تحديث رسالة الترحيب
             document.getElementById('greeting').textContent = `Hi ${userName}`;
-            // تحديث حرف الأفاتار
             document.getElementById('avatar').textContent = userName.charAt(0).toUpperCase();
         }
 
-        // ميزة إضافية: تغيير الاسم عند الضغط على الأفاتار
         function changeName() {
             let newName = prompt("Change name to:");
             if (newName) {
@@ -213,7 +243,7 @@
                 updateNameDisplay();
             }
         }
-        // ---------------------------------------------------
+        // -------------------
 
         const welcomeScreen = document.getElementById('welcome-screen');
         const chatContainer = document.getElementById('chat-container');
@@ -222,8 +252,12 @@
         const micBtn = document.getElementById('micBtn');
         const fileBtn = document.getElementById('fileBtn');
         const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImage = document.getElementById('preview-image');
+        const removeFileBtn = document.getElementById('remove-file');
 
         let isFirstMessage = true;
+        let currentImageBase64 = null; // متغير لتخزين الصورة
 
         function hideWelcomeScreen() {
             if (isFirstMessage) {
@@ -233,82 +267,25 @@
             }
         }
 
+        // --- التعامل مع الملفات (الكود الذي كان ناقصاً) ---
         fileBtn.addEventListener('click', () => fileInput.click());
 
-        textInput.addEventListener('input', () => {
-            if (textInput.value.trim().length > 0) { micBtn.style.display = 'none'; sendBtn.style.display = 'block'; } 
-            else { micBtn.style.display = 'block'; sendBtn.style.display = 'none'; }
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    currentImageBase64 = event.target.result; // حفظ الصورة
+                    previewImage.src = currentImageBase64; // عرضها
+                    previewContainer.style.display = 'block'; // إظهار الصندوق
+                    hideWelcomeScreen(); // إخفاء الترحيب لرؤية الصورة
+                };
+                reader.readAsDataURL(file);
+            }
         });
 
-        async function sendMessage(text) {
-            if (!text) return;
-            hideWelcomeScreen();
-
-            addMessage(text, 'user');
-            textInput.value = '';
-            micBtn.style.display = 'block'; sendBtn.style.display = 'none';
-
-            try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text })
-                });
-                const data = await response.json();
-                addMessage(data.reply, 'bot');
-                const cleanText = data.reply.replace(/[*#`_]/g, ''); 
-                speak(cleanText);
-            } catch (error) {
-                addMessage("حدث خطأ في الاتصال.", 'bot');
-            }
-        }
-
-        sendBtn.addEventListener('click', () => sendMessage(textInput.value));
-        textInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(textInput.value); });
-
-        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = 'en-US';
-
-        micBtn.addEventListener('click', () => {
-            hideWelcomeScreen();
-            window.speechSynthesis.cancel();
-            if (micBtn.classList.contains('recording')) recognition.stop();
-            else recognition.start();
-        });
-
-        recognition.onstart = () => micBtn.classList.add('recording');
-        recognition.onend = () => micBtn.classList.remove('recording');
-        recognition.onresult = (e) => sendMessage(e.results[0][0].transcript);
-
-        function addMessage(text, sender) {
-            const wrapper = document.createElement('div');
-            wrapper.style.display = 'flex'; wrapper.style.flexDirection = 'column';
-            
-            if (sender === 'bot') {
-                const icon = document.createElement('div');
-                icon.innerHTML = '✨'; 
-                icon.style.fontSize = '1.2rem'; icon.style.marginBottom = '5px';
-                wrapper.appendChild(icon);
-            }
-
-            const div = document.createElement('div');
-            div.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
-            
-            if (sender === 'user') { div.textContent = text; } 
-            else { div.innerHTML = marked.parse(text); }
-            
-            wrapper.appendChild(div);
-            chatContainer.appendChild(wrapper);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function speak(text) {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = /[\u0600-\u06FF]/.test(text) ? 'ar-SA' : 'en-US';
-            window.speechSynthesis.speak(u);
-        }
-    </script>
-</body>
-</html>
+        removeFileBtn.addEventListener('click', () => {
+            currentImageBase64 = null;
+            fileInput.value = "";
+            previewContainer.style.display = '
  
