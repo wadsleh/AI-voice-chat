@@ -15,29 +15,32 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            /* منع السحب لأسفل في الموبايل */
             overscroll-behavior: none;
         }
 
         header {
             padding: 15px;
             text-align: center;
-            background: #131314; /* نفس لون الخلفية لدمج التصميم */
+            background: #131314;
             font-size: 1.2rem;
             font-weight: bold;
-            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
         }
 
         .brand-name {
             background: linear-gradient(90deg, #4b90ff, #ff5546);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
         }
 
         #chat-container {
             flex: 1;
             padding: 20px;
-            padding-bottom: 120px; /* مساحة كبيرة عشان الشريط الطافي ما يغطي الكلام */
+            padding-bottom: 140px; 
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -53,45 +56,27 @@
             word-wrap: break-word;
         }
 
-        .user-message {
-            align-self: flex-end;
-            background-color: #303134;
-            color: #fff;
-            border-bottom-right-radius: 4px;
-        }
+        .user-message { align-self: flex-end; background-color: #303134; color: #fff; border-bottom-right-radius: 4px; }
+        .bot-message { align-self: flex-start; background: linear-gradient(135deg, #1f60ed 0%, #174ea6 100%); color: #fff; border-bottom-left-radius: 4px; }
+        .chat-image { max-width: 100%; border-radius: 12px; margin-top: 10px; border: 1px solid #444; }
 
-        .bot-message {
-            align-self: flex-start;
-            background: linear-gradient(135deg, #1f60ed 0%, #174ea6 100%);
-            color: #fff;
-            border-bottom-left-radius: 4px;
-        }
-
-        .chat-image {
-            max-width: 100%;
-            border-radius: 12px;
-            margin-top: 10px;
-            border: 1px solid #444;
-        }
-
-        /* --- الشريط الطافي (مثل Gemini) --- */
+        /* --- الشريط الطافي الاحترافي --- */
         #input-area {
             position: fixed;
-            bottom: 20px; /* يرتفع عن الأسفل */
+            bottom: 30px;
             left: 15px;
             right: 15px;
             background-color: #1E1F20;
-            border-radius: 35px; /* تدوير كامل للحواف */
-            padding: 8px 15px; /* حشوة داخلية */
+            border-radius: 35px;
+            padding: 8px 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             border: 1px solid #444;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5); /* ظل لإبراز الشريط */
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
             z-index: 1000;
         }
 
-        /* حقل الكتابة */
         #textInput {
             flex: 1;
             background: transparent;
@@ -103,52 +88,53 @@
             outline: none;
         }
 
-        /* الأزرار */
         .icon-btn {
             background: transparent;
             border: none;
             color: #aaa;
             font-size: 1.2rem;
             cursor: pointer;
-            padding: 10px;
+            padding: 8px;
             border-radius: 50%;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px;
+            transition: 0.2s;
         }
-
         .icon-btn:hover { background-color: #333; color: #fff; }
-        .icon-btn:active { transform: scale(0.9); }
+        
+        #sendBtn { color: #4b90ff; display: none; }
+        #micBtn.recording { color: #ff5546; background-color: rgba(255, 85, 70, 0.2); animation: pulse 1.5s infinite; }
 
-        #sendBtn { color: #4b90ff; }
-        #micBtn.recording { 
-            color: #ff5546; 
-            background-color: rgba(255, 85, 70, 0.2);
-            animation: pulse 1.5s infinite;
+        /* زر تبديل اللغة */
+        #langBtn {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #fff;
+            background: #333;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            border: 1px solid #555;
+            width: auto;
+            height: 30px;
         }
 
-        /* معاينة الصور */
         #preview-container {
             position: fixed;
-            bottom: 90px; /* فوق الشريط الطافي مباشرة */
-            left: 20px;
+            bottom: 100px;
+            left: 25px;
             background: #2C2C2E;
             padding: 8px;
             border-radius: 12px;
             display: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             z-index: 999;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
         #preview-image { max-width: 80px; max-height: 80px; border-radius: 8px; }
         #remove-file {
-            position: absolute; top: -8px; right: -8px;
-            background: #ff5546; color: white; border-radius: 50%;
-            width: 22px; height: 22px; text-align: center;
-            line-height: 22px; cursor: pointer; font-size: 14px;
-            border: 2px solid #2C2C2E;
+            position: absolute; top: -8px; right: -8px; background: #ff5546; color: white;
+            border-radius: 50%; width: 22px; height: 22px; text-align: center;
+            line-height: 22px; cursor: pointer; border: 2px solid #2C2C2E; font-size: 12px;
         }
 
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 85, 70, 0.4); } 100% { box-shadow: 0 0 0 10px rgba(255, 85, 70, 0); } }
@@ -156,10 +142,12 @@
 </head>
 <body>
 
-    <header>✨ <span class="brand-name">MVC AI</span></header>
+    <header>
+        🤖 <span class="brand-name">MVC AI</span>
+    </header>
 
     <div id="chat-container">
-        <div class="message bot-message">مرحباً! التصميم الآن يشبه Gemini. جرب الكتابة أو التحدث! 🎙️</div>
+        <div class="message bot-message">مرحباً! أنا MVC AI. <br>I can speak both Arabic and English. Select your language below! 🌍</div>
     </div>
 
     <div id="preview-container">
@@ -170,12 +158,13 @@
     <div id="input-area">
         <button class="icon-btn" id="fileBtn"><i class="fas fa-plus"></i></button>
         <input type="file" id="fileInput" accept="image/*" style="display: none;">
-
-        <input type="text" id="textInput" placeholder="اكتب رسالتك..." autocomplete="off">
+        
+        <input type="text" id="textInput" placeholder="Type or Speak..." autocomplete="off">
+        
+        <button id="langBtn">AR</button>
 
         <button class="icon-btn" id="micBtn"><i class="fas fa-microphone"></i></button>
-        
-        <button class="icon-btn" id="sendBtn" style="display: none;"><i class="fas fa-paper-plane"></i></button>
+        <button class="icon-btn" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
     </div>
 
     <script>
@@ -188,10 +177,28 @@
         const previewContainer = document.getElementById('preview-container');
         const previewImage = document.getElementById('preview-image');
         const removeFileBtn = document.getElementById('remove-file');
+        const langBtn = document.getElementById('langBtn');
         
         let currentImageBase64 = null;
+        let currentLang = 'ar-SA'; // اللغة الافتراضية
 
-        // تبديل بين المايك والإرسال حسب الكتابة
+        // تبديل اللغة
+        langBtn.addEventListener('click', () => {
+            if (currentLang === 'ar-SA') {
+                currentLang = 'en-US';
+                langBtn.textContent = 'EN';
+                textInput.placeholder = "Type message...";
+                textInput.dir = "ltr";
+            } else {
+                currentLang = 'ar-SA';
+                langBtn.textContent = 'AR';
+                textInput.placeholder = "اكتب رسالتك...";
+                textInput.dir = "rtl";
+            }
+            // تحديث لغة المايك
+            recognition.lang = currentLang;
+        });
+
         textInput.addEventListener('input', () => {
             if (textInput.value.trim().length > 0) {
                 micBtn.style.display = 'none';
@@ -232,7 +239,7 @@
             currentImageBase64 = null;
             previewContainer.style.display = 'none';
             fileInput.value = '';
-            micBtn.style.display = 'flex'; // إعادة زر المايك
+            micBtn.style.display = 'flex';
             sendBtn.style.display = 'none';
 
             try {
@@ -245,16 +252,16 @@
                 addMessage(data.reply, 'bot');
                 speak(data.reply);
             } catch (error) {
-                addMessage("حدث خطأ في الاتصال", 'bot');
+                addMessage("حدث خطأ في الاتصال / Connection Error", 'bot');
             }
         }
 
         sendBtn.addEventListener('click', () => sendMessage(textInput.value));
         textInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(textInput.value); });
         
-        // إعدادات الصوت
+        // إعدادات المايك
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = 'ar-SA';
+        recognition.lang = currentLang; // استخدام اللغة المحددة
         
         micBtn.addEventListener('click', () => {
             window.speechSynthesis.cancel();
@@ -262,8 +269,8 @@
             else recognition.start();
         });
 
-        recognition.onstart = () => { micBtn.classList.add('recording'); textInput.placeholder = "جاري الاستماع..."; };
-        recognition.onend = () => { micBtn.classList.remove('recording'); textInput.placeholder = "اكتب رسالتك..."; };
+        recognition.onstart = () => { micBtn.classList.add('recording'); };
+        recognition.onend = () => { micBtn.classList.remove('recording'); };
         recognition.onresult = (e) => sendMessage(e.results[0][0].transcript);
 
         function addMessage(text, sender, img) {
@@ -278,10 +285,10 @@
         function speak(text) {
             window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(text);
+            // كشف لغة الرد تلقائياً للنطق الصحيح
             u.lang = /[\u0600-\u06FF]/.test(text) ? 'ar-SA' : 'en-US';
             window.speechSynthesis.speak(u);
         }
     </script>
 </body>
 </html>
- 
