@@ -36,8 +36,14 @@
             align-items: center;
         }
 
-        .brand-container { display: flex; align-items: center; gap: 10px; }
-        .app-logo { height: 50px; width: auto; object-fit: contain; }
+        .brand-container { display: flex; align-items: center; gap: 12px; }
+        .app-logo { 
+            height: 50px; 
+            width: auto; 
+            max-width: 160px; 
+            object-fit: contain; 
+            display: block; 
+        }
         .brand-name { font-size: 1.3rem; font-weight: 600; color: #E3E3E3; letter-spacing: 0.5px; }
         .user-avatar { 
             width: 35px; height: 35px; background: #FF8A65; border-radius: 50%;
@@ -52,14 +58,12 @@
         }
 
         .greeting-hi { font-size: 3.5rem; font-weight: 500; color: white; line-height: 1.1; }
-        
         .greeting-name {
             font-size: 3.5rem; font-weight: 500;
             background: linear-gradient(90deg, #5c97ff, #ff6b6b);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             line-height: 1.1;
         }
-
         .greeting-sub {
             font-size: 3.5rem; font-weight: 500; color: #E3E3E3;
             margin-bottom: 40px; line-height: 1.1;
@@ -69,16 +73,13 @@
             .greeting-hi, .greeting-name, .greeting-sub { font-size: 2.8rem; }
         }
 
-        /* الكبسولات */
         .suggestions { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
-
         .chip {
             background-color: #1E1F20; padding: 14px 24px; border-radius: 25px;
             font-size: 1rem; color: #E3E3E3; cursor: pointer;
             display: flex; align-items: center; gap: 15px; transition: 0.2s;
         }
         .chip:hover { background-color: #333; }
-        
         .icon-yellow { color: #FBC02D; }
         .icon-green { color: #34A853; }
         .icon-red { color: #EA4335; }
@@ -90,36 +91,63 @@
         }
 
         .message { max-width: 90%; line-height: 1.6; font-size: 1rem; position: relative; }
-        
         .user-message {
             align-self: flex-end; background-color: #282A2C; color: white;
             padding: 12px 20px; border-radius: 20px 20px 20px 4px;
         }
-
         .bot-message {
             align-self: flex-start; background: transparent; color: #E3E3E3;
             padding: 0; padding-left: 15px;
         }
         .bot-message::before { content: '✨'; display: inline-block; margin-left: 8px; }
         .bot-message code { background: #2D2E30; padding: 2px 5px; border-radius: 4px; color: #A8C7FA; font-family: monospace; }
+        
+        /* تنسيق الصورة داخل الشات */
+        .chat-image {
+            max-width: 100%;
+            border-radius: 12px;
+            margin-top: 10px;
+            border: 1px solid #444;
+        }
+
+        /* --- صندوق معاينة الصورة قبل الإرسال --- */
+        #preview-container {
+            position: fixed; bottom: 85px; left: 20px;
+            background: #2C2C2E; padding: 8px; border-radius: 12px;
+            display: none; z-index: 1001; border: 1px solid #444;
+        }
+        #preview-image { width: 70px; height: 70px; border-radius: 8px; object-fit: cover; }
+        #remove-file {
+            position: absolute; top: -8px; right: -8px;
+            background: #ff4d4d; color: white; border-radius: 50%;
+            width: 22px; height: 22px; text-align: center; line-height: 22px;
+            cursor: pointer; font-size: 14px; border: 2px solid #2C2C2E;
+        }
 
         /* --- شريط الإدخال --- */
         #input-area {
             position: fixed; bottom: 20px; left: 15px; right: 15px;
             background-color: #1E1F20; border-radius: 35px; padding: 8px 15px;
-            display: flex; align-items: center; gap: 12px; z-index: 1000;
+            display: flex; align-items: center; gap: 8px; z-index: 1000;
         }
 
-        /* زر اللغة (أصبح على اليسار الآن) */
+        /* زر اللغة وزر الرفع (يسار) */
         #langBtn {
             background: #333; color: #fff; border: 1px solid #555; padding: 8px 12px;
             border-radius: 20px; font-size: 0.9rem; font-weight: bold; cursor: pointer;
             min-width: 50px; text-align: center;
         }
+        
+        .attach-btn {
+            background: transparent; border: none; color: #C4C7C5; 
+            font-size: 1.3rem; cursor: pointer; padding: 5px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .attach-btn:hover { color: #E3E3E3; }
 
         #textInput { flex: 1; background: transparent; border: none; color: white; font-size: 1.1rem; padding: 5px; outline: none; }
         
-        /* المايك وزر الإرسال (أصبحوا على اليمين) */
+        /* المايك وزر الإرسال (يمين) */
         .icon-btn { 
             width: 40px; height: 40px; border-radius: 50%; border: none; background: transparent; 
             color: white; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer;
@@ -159,8 +187,15 @@
 
     <div id="chat-container"></div>
 
+    <div id="preview-container">
+        <span id="remove-file">×</span>
+        <img id="preview-image" src="" alt="preview">
+    </div>
+
     <div id="input-area">
         <button id="langBtn">AR</button>
+        <button class="attach-btn" id="fileBtn"><i class="fas fa-paperclip"></i></button>
+        <input type="file" id="fileInput" accept="image/*" style="display: none;">
 
         <input type="text" id="textInput" placeholder="Ask MVC AI" autocomplete="off">
         
@@ -175,26 +210,56 @@
         const sendBtn = document.getElementById('sendBtn');
         const micBtn = document.getElementById('micBtn');
         const langBtn = document.getElementById('langBtn');
+        const fileBtn = document.getElementById('fileBtn');
+        const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImage = document.getElementById('preview-image');
+        const removeFileBtn = document.getElementById('remove-file');
 
         let isFirstMessage = true;
         let currentLang = 'en-US';
+        let currentImageBase64 = null; // لتخزين الصورة
+
+        // --- إدارة الملفات ---
+        fileBtn.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    currentImageBase64 = event.target.result;
+                    previewImage.src = currentImageBase64;
+                    previewContainer.style.display = 'block';
+                    // إظهار زر الإرسال فوراً عند اختيار صورة
+                    micBtn.style.display = 'none'; sendBtn.style.display = 'flex';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        removeFileBtn.addEventListener('click', () => {
+            currentImageBase64 = null;
+            fileInput.value = "";
+            previewContainer.style.display = 'none';
+            if (textInput.value.trim().length === 0) {
+                micBtn.style.display = 'flex'; sendBtn.style.display = 'none';
+            }
+        });
+        // ---------------------
 
         langBtn.addEventListener('click', () => {
             if (currentLang === 'en-US') {
-                currentLang = 'ar-SA';
-                langBtn.textContent = 'EN';
-                textInput.placeholder = "اسأل MVC AI...";
-                textInput.dir = "rtl";
+                currentLang = 'ar-SA'; langBtn.textContent = 'EN';
+                textInput.placeholder = "اسأل MVC AI..."; textInput.dir = "rtl";
             } else {
-                currentLang = 'en-US';
-                langBtn.textContent = 'AR';
-                textInput.placeholder = "Ask MVC AI...";
-                textInput.dir = "ltr";
+                currentLang = 'en-US'; langBtn.textContent = 'AR';
+                textInput.placeholder = "Ask MVC AI..."; textInput.dir = "ltr";
             }
         });
 
         textInput.addEventListener('input', () => {
-            if (textInput.value.trim().length > 0) {
+            if (textInput.value.trim().length > 0 || currentImageBase64) {
                 micBtn.style.display = 'none'; sendBtn.style.display = 'flex';
             } else {
                 micBtn.style.display = 'flex'; sendBtn.style.display = 'none';
@@ -210,23 +275,44 @@
         }
 
         async function sendMessage(text) {
-            if (!text) return;
+            if (!text && !currentImageBase64) return;
             hideWelcome();
 
             const userDiv = document.createElement('div');
             userDiv.classList.add('message', 'user-message');
             userDiv.textContent = text;
+
+            // عرض الصورة في شات المستخدم إذا وجدت
+            if (currentImageBase64) {
+                const img = document.createElement('img');
+                img.src = currentImageBase64;
+                img.classList.add('chat-image');
+                userDiv.appendChild(img);
+            }
+
             chatContainer.appendChild(userDiv);
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
+            // إعداد البيانات للإرسال
+            const payload = { 
+                message: text, 
+                image: currentImageBase64, // نرسل الصورة للسيرفر
+                language: currentLang 
+            };
+
+            // تنظيف الحقول
             textInput.value = '';
+            const tempImage = currentImageBase64; // نسخة احتياطية
+            currentImageBase64 = null;
+            previewContainer.style.display = 'none';
+            fileInput.value = '';
             micBtn.style.display = 'flex'; sendBtn.style.display = 'none';
 
             try {
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text, language: currentLang })
+                    body: JSON.stringify(payload)
                 });
                 const data = await response.json();
                 
@@ -241,7 +327,7 @@
             } catch (error) {
                 const errDiv = document.createElement('div');
                 errDiv.classList.add('message', 'bot-message');
-                errDiv.textContent = "Error.";
+                errDiv.textContent = "Error processing request.";
                 chatContainer.appendChild(errDiv);
             }
         }
