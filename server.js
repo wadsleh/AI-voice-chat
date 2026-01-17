@@ -4,27 +4,18 @@ require('dotenv').config();
 
 const app = express();
 app.use(cors());
-
-// زيادة سعة البيانات لاستقبال الصور الكبيرة (Base64)
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static('public'));
 
-// جلب المفتاح من متغيرات البيئة
 const GROQ_API_KEY = process.env.MURTA;
 
 app.post('/api/chat', async (req, res) => {
   try {
     const { message, image } = req.body;
     
-    // تجهيز محتوى الرسالة
     let userContent = [{ type: "text", text: message }];
-    
-    // إذا وجدنا صورة، نضيفها
     if (image) {
-        userContent.push({
-            type: "image_url",
-            image_url: { url: image }
-        });
+        userContent.push({ type: "image_url", image_url: { url: image } });
     }
 
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -36,34 +27,26 @@ app.post('/api/chat', async (req, res) => {
         body: JSON.stringify({
             messages: [
                 { 
+                    // ⚠️ هنا نحدد شخصية البوت: اسمه MVC AI وليس Gemini
                     role: "system", 
-                    content: "You are MVC AI. Helpful, smart, and concise. Reply in the user's language." 
+                    content: "You are MVC AI, a professional and smart assistant created by Murtada. You are NOT Gemini. You help with code, images, and general questions. Always reply in the EXACT SAME language the user is speaking (if English reply English, if Arabic reply Arabic)." 
                 },
-                { 
-                    role: "user", 
-                    content: userContent 
-                }
+                { role: "user", content: userContent }
             ],
-            // ⚠️ التعديل الهام: استخدام موديل Llama 3.3 القوي والمستقر
-            // ملاحظة: إذا واجهت مشكلة في الصور مع هذا الموديل، جرب "llama-3.2-90b-vision-preview"
-            model: "llama-3.3-70b-versatile", 
+            // موديل قوي يدعم الصور والنصوص
+            model: "llama-3.2-90b-vision-preview",
             temperature: 0.7
         })
     });
 
     const data = await response.json();
-
-    if (data.error) {
-        // طباعة الخطأ في الكونسول لمعرفته
-        console.error("Groq Error:", data.error);
-        throw new Error(data.error.message);
-    }
+    if (data.error) throw new Error(data.error.message);
     
     res.json({ reply: data.choices[0].message.content });
 
   } catch (error) {
     console.error("Server Error:", error);
-    res.status(500).json({ reply: "حدث خطأ في النظام (قد يكون الموديل مشغولاً، حاول مجدداً)." });
+    res.status(500).json({ reply: "Connection error. Please try again." });
   }
 });
 
