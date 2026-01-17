@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
-            background-color: #131314;
-            color: #E3E3E3;
-            font-family: 'Cairo', 'Roboto', sans-serif;
+            background-color: #121212; /* لون داكن احترافي */
+            color: #E0E0E0;
+            font-family: 'Roboto', 'Cairo', sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
@@ -21,20 +21,19 @@
         header {
             padding: 15px;
             text-align: center;
-            background: #131314;
-            font-size: 1.2rem;
-            font-weight: bold;
+            background: #1E1E1E;
+            border-bottom: 1px solid #333;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 10px;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
         }
 
-        .brand-name {
-            background: linear-gradient(90deg, #4b90ff, #ff5546);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 1px;
+        .brand-logo {
+            color: #4b90ff; /* لون العلامة التجارية */
+            font-weight: 900;
         }
 
         #chat-container {
@@ -49,31 +48,41 @@
 
         .message {
             max-width: 85%;
-            padding: 12px 18px;
-            border-radius: 20px;
-            line-height: 1.6;
+            padding: 14px 18px;
+            border-radius: 18px;
+            line-height: 1.5;
             font-size: 1rem;
-            word-wrap: break-word;
+            position: relative;
         }
 
-        .user-message { align-self: flex-end; background-color: #303134; color: #fff; border-bottom-right-radius: 4px; }
-        .bot-message { align-self: flex-start; background: linear-gradient(135deg, #1f60ed 0%, #174ea6 100%); color: #fff; border-bottom-left-radius: 4px; }
-        .chat-image { max-width: 100%; border-radius: 12px; margin-top: 10px; border: 1px solid #444; }
+        .user-message {
+            align-self: flex-end;
+            background-color: #2C2C2C;
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
 
-        /* --- الشريط الطافي الاحترافي --- */
+        .bot-message {
+            align-self: flex-start;
+            background: #0056b3;
+            color: #fff;
+            border-bottom-left-radius: 4px;
+        }
+
+        /* --- شريط التحكم الاحترافي --- */
         #input-area {
             position: fixed;
             bottom: 30px;
             left: 15px;
             right: 15px;
-            background-color: #1E1F20;
-            border-radius: 35px;
+            background-color: #1E1E1E;
+            border-radius: 50px;
             padding: 8px 12px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            border: 1px solid #444;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            gap: 10px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+            border: 1px solid #333;
             z-index: 1000;
         }
 
@@ -82,89 +91,66 @@
             background: transparent;
             border: none;
             color: white;
-            font-family: inherit;
             font-size: 1rem;
-            padding: 10px 5px;
+            padding: 10px;
             outline: none;
         }
 
-        .icon-btn {
-            background: transparent;
-            border: none;
-            color: #aaa;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            width: 40px; height: 40px;
-            transition: 0.2s;
-        }
-        .icon-btn:hover { background-color: #333; color: #fff; }
-        
-        #sendBtn { color: #4b90ff; display: none; }
-        #micBtn.recording { color: #ff5546; background-color: rgba(255, 85, 70, 0.2); animation: pulse 1.5s infinite; }
-
-        /* زر تبديل اللغة */
+        /* زر اللغة */
         #langBtn {
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 6px 12px;
+            border-radius: 20px;
             font-size: 0.8rem;
             font-weight: bold;
-            color: #fff;
-            background: #333;
-            padding: 5px 10px;
-            border-radius: 15px;
             cursor: pointer;
-            border: 1px solid #555;
-            width: auto;
-            height: 30px;
+            transition: 0.3s;
+        }
+        #langBtn:hover { background: #444; }
+
+        .action-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.2s;
         }
 
-        #preview-container {
-            position: fixed;
-            bottom: 100px;
-            left: 25px;
-            background: #2C2C2E;
-            padding: 8px;
-            border-radius: 12px;
-            display: none;
-            z-index: 999;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        }
-        #preview-image { max-width: 80px; max-height: 80px; border-radius: 8px; }
-        #remove-file {
-            position: absolute; top: -8px; right: -8px; background: #ff5546; color: white;
-            border-radius: 50%; width: 22px; height: 22px; text-align: center;
-            line-height: 22px; cursor: pointer; border: 2px solid #2C2C2E; font-size: 12px;
-        }
+        #micBtn { background: #2C2C2C; color: #fff; }
+        #micBtn.recording { background: #ff4d4d; color: white; animation: pulse 1.5s infinite; }
+        
+        #sendBtn { background: #4b90ff; color: white; display: none; }
 
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 85, 70, 0.4); } 100% { box-shadow: 0 0 0 10px rgba(255, 85, 70, 0); } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.4); } 100% { box-shadow: 0 0 0 15px rgba(255, 77, 77, 0); } }
     </style>
 </head>
 <body>
 
     <header>
-        🤖 <span class="brand-name">MVC AI</span>
+        <i class="fas fa-robot brand-logo"></i> <span>MVC AI</span>
     </header>
 
     <div id="chat-container">
-        <div class="message bot-message">مرحباً! أنا MVC AI. <br>I can speak both Arabic and English. Select your language below! 🌍</div>
-    </div>
-
-    <div id="preview-container">
-        <span id="remove-file">×</span>
-        <img id="preview-image" src="" alt="preview">
+        <div class="message bot-message">
+            <strong>Hello! I am MVC AI.</strong><br>
+            I am ready to help you in English or Arabic. Please select your language below. 🎙️
+        </div>
     </div>
 
     <div id="input-area">
-        <button class="icon-btn" id="fileBtn"><i class="fas fa-plus"></i></button>
-        <input type="file" id="fileInput" accept="image/*" style="display: none;">
-        
-        <input type="text" id="textInput" placeholder="Type or Speak..." autocomplete="off">
-        
         <button id="langBtn">AR</button>
-
-        <button class="icon-btn" id="micBtn"><i class="fas fa-microphone"></i></button>
-        <button class="icon-btn" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+        
+        <input type="text" id="textInput" placeholder="اكتب رسالتك..." dir="rtl" autocomplete="off">
+        
+        <button class="action-btn" id="micBtn"><i class="fas fa-microphone"></i></button>
+        <button class="action-btn" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
     </div>
 
     <script>
@@ -172,33 +158,30 @@
         const textInput = document.getElementById('textInput');
         const sendBtn = document.getElementById('sendBtn');
         const micBtn = document.getElementById('micBtn');
-        const fileBtn = document.getElementById('fileBtn');
-        const fileInput = document.getElementById('fileInput');
-        const previewContainer = document.getElementById('preview-container');
-        const previewImage = document.getElementById('preview-image');
-        const removeFileBtn = document.getElementById('remove-file');
         const langBtn = document.getElementById('langBtn');
         
-        let currentImageBase64 = null;
-        let currentLang = 'ar-SA'; // اللغة الافتراضية
+        let currentLang = 'ar-SA'; // اللغة الافتراضية عربية
 
-        // تبديل اللغة
+        // 1. منطق تبديل اللغة
         langBtn.addEventListener('click', () => {
             if (currentLang === 'ar-SA') {
                 currentLang = 'en-US';
                 langBtn.textContent = 'EN';
-                textInput.placeholder = "Type message...";
+                textInput.placeholder = "Type your message...";
                 textInput.dir = "ltr";
+                // تغيير لغة المايك
+                recognition.lang = 'en-US';
             } else {
                 currentLang = 'ar-SA';
                 langBtn.textContent = 'AR';
                 textInput.placeholder = "اكتب رسالتك...";
                 textInput.dir = "rtl";
+                // تغيير لغة المايك
+                recognition.lang = 'ar-SA';
             }
-            // تحديث لغة المايك
-            recognition.lang = currentLang;
         });
 
+        // 2. إظهار زر الإرسال عند الكتابة
         textInput.addEventListener('input', () => {
             if (textInput.value.trim().length > 0) {
                 micBtn.style.display = 'none';
@@ -209,36 +192,12 @@
             }
         });
 
-        fileBtn.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    currentImageBase64 = event.target.result;
-                    previewImage.src = currentImageBase64;
-                    previewContainer.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        removeFileBtn.addEventListener('click', () => {
-            currentImageBase64 = null;
-            fileInput.value = "";
-            previewContainer.style.display = 'none';
-        });
-
+        // 3. الإرسال
         async function sendMessage(text) {
-            if (!text && !currentImageBase64) return;
+            if (!text) return;
             
-            addMessage(text, 'user', currentImageBase64);
-            const payload = { message: text || "وصف الصورة", image: currentImageBase64 };
-            
+            addMessage(text, 'user');
             textInput.value = '';
-            currentImageBase64 = null;
-            previewContainer.style.display = 'none';
-            fileInput.value = '';
             micBtn.style.display = 'flex';
             sendBtn.style.display = 'none';
 
@@ -246,7 +205,7 @@
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({ message: text })
                 });
                 const data = await response.json();
                 addMessage(data.reply, 'bot');
@@ -258,26 +217,29 @@
 
         sendBtn.addEventListener('click', () => sendMessage(textInput.value));
         textInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(textInput.value); });
-        
-        // إعدادات المايك
+
+        // 4. التعرف على الصوت
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = currentLang; // استخدام اللغة المحددة
-        
+        recognition.lang = currentLang;
+
         micBtn.addEventListener('click', () => {
             window.speechSynthesis.cancel();
-            if (micBtn.classList.contains('recording')) recognition.stop();
-            else recognition.start();
+            if (micBtn.classList.contains('recording')) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
         });
 
         recognition.onstart = () => { micBtn.classList.add('recording'); };
         recognition.onend = () => { micBtn.classList.remove('recording'); };
         recognition.onresult = (e) => sendMessage(e.results[0][0].transcript);
 
-        function addMessage(text, sender, img) {
+        // 5. المساعد
+        function addMessage(text, sender) {
             const div = document.createElement('div');
             div.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
-            if (text) { const p = document.createElement('p'); p.textContent = text; p.style.margin=0; div.appendChild(p); }
-            if (img) { const i = document.createElement('img'); i.src = img; i.classList.add('chat-image'); div.appendChild(i); }
+            div.textContent = text;
             chatContainer.appendChild(div);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
@@ -285,7 +247,7 @@
         function speak(text) {
             window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(text);
-            // كشف لغة الرد تلقائياً للنطق الصحيح
+            // ذكاء اصطناعي بسيط لكشف لغة النص للنطق الصحيح
             u.lang = /[\u0600-\u06FF]/.test(text) ? 'ar-SA' : 'en-US';
             window.speechSynthesis.speak(u);
         }
