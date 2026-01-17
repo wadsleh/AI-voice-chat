@@ -122,9 +122,20 @@
         #input-area {
             position: fixed; bottom: 20px; left: 15px; right: 15px;
             background-color: #1E1F20; border-radius: 35px;
-            padding: 10px 15px; /* حشو مريح */
+            
+            /* ✅ التعديل هنا: زيادة المسافة اليمنى لراحة المايك */
+            padding: 10px 20px 10px 15px; 
+            
             display: flex; align-items: center; gap: 10px; z-index: 1000;
-            min-height: 60px; /* ارتفاع ثابت يشبه Gemini */
+            min-height: 60px;
+        }
+
+        /* ✅ تعديل خاص للموبايل فقط */
+        @media (max-width: 480px) {
+            #input-area {
+                padding-right: 25px; /* دفع المايك لليسار قليلاً في الموبايل */
+                padding-left: 15px;
+            }
         }
 
         #langBtn {
@@ -141,9 +152,9 @@
 
         #textInput { flex: 1; background: transparent; border: none; color: white; font-size: 1.1rem; padding: 5px; outline: none; }
         
-        /* --- تعديل المايك (كبير وواضح مثل Gemini) --- */
+        /* --- المايك كبير وواضح --- */
         .icon-btn { 
-            width: 45px; height: 45px; /* حجم كبير ومريح لللمس */
+            width: 45px; height: 45px; 
             border-radius: 50%; border: none; background: transparent; 
             color: white; font-size: 1.2rem; 
             display: flex; align-items: center; justify-content: center; cursor: pointer;
@@ -151,9 +162,12 @@
         }
         
         #micBtn { 
-            background: #2C2C2E; /* خلفية مميزة للمايك */
-            width: 50px; height: 50px; /* أكبر قليلاً ليكون العنصر الأبرز */
-            border-radius: 50%;
+            background: #2C2C2E; 
+            width: 50px; height: 50px; 
+            border-radius: 50%; 
+            justify-content: center;
+            /* إزالة أي هوامش زائدة */
+            margin: 0;
         }
         
         #micBtn:active { background: #3c3c3e; }
@@ -354,3 +368,4 @@
     </script>
 </body>
 </html>
+ 
