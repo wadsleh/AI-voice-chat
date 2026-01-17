@@ -10,7 +10,7 @@
 
     <style>
         :root {
-            --bg-color: #131314;       
+            --bg-color: #000000; /* خلفية سوداء تماماً مثل الصورة */
             --surface-color: #1E1F20;
             --text-primary: #E3E3E3;
             --text-secondary: #C4C7C5; 
@@ -28,173 +28,167 @@
             overscroll-behavior: none;
         }
 
-        /* --- الهيدر --- */
+        /* --- الهيدر (صورة مرتضى والاسم) --- */
         header {
-            padding: 15px 20px;
+            padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .header-title { font-size: 1.2rem; font-weight: 500; color: var(--text-secondary); }
+        .header-title { font-size: 1.2rem; font-weight: 500; color: white; letter-spacing: 0.5px; }
         .user-avatar { 
             width: 35px; height: 35px; 
-            background: #FF6F61;
             border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: bold; color: white;
+            overflow: hidden;
+            border: 2px solid #333;
         }
+        .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- شاشة الترحيب (Hi Friend) --- */
+        /* --- شاشة الترحيب (مطابقة للصورة 100%) --- */
         #welcome-screen {
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: center; /* توسيط عمودي */
+            align-items: flex-start; /* محاذاة لليسار */
             padding: 30px;
-            padding-bottom: 120px; /* لرفع النص للأعلى قليلاً */
+            padding-bottom: 100px;
         }
 
-        .greeting-title {
-            font-size: 3.8rem;
-            font-weight: 700;
+        .greeting-line1 {
+            font-size: 3rem;
+            font-weight: 500;
+            color: #E3E3E3;
             margin-bottom: 5px;
+        }
+
+        .greeting-line2 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            color: #E3E3E3; /* أبيض */
             line-height: 1.1;
-            background: linear-gradient(90deg, #4b90ff, #ff5546); /* التدرج اللوني */
+            margin-bottom: 40px;
+        }
+        
+        /* تلوين الاسم فقط إذا أردت، أو تركه أبيض مثل الصورة */
+        .highlight-name {
+            background: linear-gradient(90deg, #4b90ff, #ff5546);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
         }
 
-        .greeting-sub {
-            font-size: 3.8rem;
-            font-weight: 700;
-            color: #444746; /* رمادي غامق */
-            line-height: 1.1;
+        /* كبسولات الاقتراحات (Chips) */
+        .suggestions {
+            display: flex;
+            flex-direction: column; /* تحت بعض مثل القائمة */
+            align-items: flex-start; /* محاذاة لليسار */
+            gap: 12px;
+            width: 100%;
         }
 
-        .subtitle {
-            font-size: 2rem;
-            font-weight: 500;
-            color: #444746;
-            margin-top: 10px;
+        .chip {
+            background-color: #1E1F20;
+            padding: 15px 25px;
+            border-radius: 25px; /* تدوير كامل للحواف */
+            font-size: 1.1rem;
+            color: #E3E3E3;
+            cursor: pointer;
+            display: flex; align-items: center; gap: 15px;
+            width: auto;
+            transition: 0.2s;
         }
-
-        @media (max-width: 480px) {
-            .greeting-title, .greeting-sub { font-size: 3rem; }
-            .subtitle { font-size: 1.5rem; }
+        
+        .chip i { 
+            font-size: 1.2rem; 
         }
+        
+        .chip.yellow i { color: #F4B400; }
+        .chip.blue i { color: #4285F4; }
+        .chip.green i { color: #0F9D58; }
+        .chip.red i { color: #DB4437; }
 
         /* --- الشات --- */
         #chat-container {
-            flex: 1;
-            padding: 20px;
-            padding-bottom: 140px; 
-            overflow-y: auto;
-            display: none;
-            flex-direction: column;
-            gap: 20px;
+            flex: 1; padding: 20px; padding-bottom: 140px; 
+            overflow-y: auto; display: none; flex-direction: column; gap: 20px;
         }
 
         .message { max-width: 90%; line-height: 1.6; font-size: 1rem; position: relative; }
         
-        /* رسالة المستخدم */
         .user-message {
             align-self: flex-end;
             background-color: #282A2C;
-            color: var(--text-primary);
+            color: white;
             padding: 12px 20px;
             border-radius: 20px 20px 4px 20px;
         }
 
-        /* رسالة البوت */
         .bot-message {
             align-self: flex-start;
             background: transparent;
-            color: var(--text-primary);
-            padding: 0;
-            padding-right: 15px;
+            color: #E3E3E3;
+            padding: 0; padding-right: 15px;
         }
-
-        /* أيقونة النجمة */
         .bot-message::before { content: '✨'; display: inline-block; margin-right: 8px; font-size: 1.2rem; }
 
-        /* تنسيق الصورة داخل الشات */
-        .chat-image {
-            max-width: 100%;
-            border-radius: 12px;
-            margin-top: 8px;
-            border: 1px solid #333;
-            display: block;
-        }
-
-        /* Markdown */
-        .bot-message h1 { color: var(--text-primary); font-size: 1.2rem; margin-top: 10px; }
-        .bot-message strong { color: white; font-weight: 700; }
-        .bot-message code { background: #2D2E30; padding: 2px 5px; border-radius: 4px; color: #A8C7FA; font-family: monospace; }
-
-        /* --- صندوق المعاينة (منظم جداً) --- */
+        /* معاينة الصورة */
         #preview-container {
-            position: fixed;
-            bottom: 90px;
-            left: 20px;
-            background: #2C2C2E;
-            padding: 5px;
-            border-radius: 12px;
-            display: none;
-            z-index: 1001;
-            border: 1px solid #444;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            position: fixed; bottom: 90px; left: 20px; background: #2C2C2E; padding: 5px;
+            border-radius: 12px; display: none; z-index: 1001; border: 1px solid #444;
         }
-        #preview-image { 
-            width: 60px; height: 60px; 
-            border-radius: 8px; 
-            object-fit: cover; 
-        }
+        #preview-image { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
         #remove-file {
-            position: absolute; top: -8px; right: -8px; 
-            background: #ff4d4d; color: white; border-radius: 50%; 
-            width: 20px; height: 20px; text-align: center; line-height: 20px; 
-            cursor: pointer; font-size: 12px; border: 2px solid #2C2C2E;
+            position: absolute; top: -8px; right: -8px; background: #ff4d4d; color: white;
+            border-radius: 50%; width: 20px; height: 20px; text-align: center; line-height: 20px; 
+            cursor: pointer; font-size: 12px;
         }
 
-        /* --- شريط الإدخال --- */
+        /* شريط الإدخال Gemini Style */
         #input-area {
             position: fixed; bottom: 20px; left: 15px; right: 15px;
-            background-color: var(--surface-color); border-radius: 35px; padding: 10px 15px;
-            display: flex; align-items: center; gap: 10px;
-            z-index: 1000;
+            background-color: #1E1F20; border-radius: 35px; padding: 10px 20px;
+            display: flex; align-items: center; gap: 15px; z-index: 1000;
         }
 
-        #textInput { flex: 1; background: transparent; border: none; color: white; font-size: 1rem; padding: 5px; outline: none; }
+        #textInput { flex: 1; background: transparent; border: none; color: white; font-size: 1.1rem; padding: 5px; outline: none; }
         
-        .action-btn { 
-            width: 40px; height: 40px; border-radius: 50%; border: none; 
-            background: transparent; color: white; font-size: 1.2rem; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center;
-        }
-        .action-btn:hover { background-color: #333; }
-        
-        #micBtn { display: flex; }
+        .action-btn { background: transparent; color: white; border: none; font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; }
+        #micBtn { background: #2C2C2E; width: 45px; height: 45px; border-radius: 50%; justify-content: center; }
         #micBtn.recording { color: #ff4d4d; }
-        #sendBtn { display: none; color: #A8C7FA; transform: rotate(0deg); } /* زر الإرسال */
+        #sendBtn { display: none; color: #A8C7FA; } 
+        .plus-btn { color: #C4C7C5; font-size: 1.5rem; cursor: pointer; border: none; background: transparent; }
 
-        .plus-btn { 
-            background-color: #2B2C2E; width: 35px; height: 35px; border-radius: 50%; 
-            color: #C4C7C5; border: none; font-size: 1.2rem; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center;
-        }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="header-title">MVC AI</div>
-        <div class="user-avatar">F</div>
+        <div class="header-title">Gemini</div>
+        <div class="user-avatar">
+            <img src="https://ui-avatars.com/api/?name=Murtada&background=random" alt="User">
+        </div>
     </header>
 
     <div id="welcome-screen">
-        <div class="greeting-title">Hi <span style="background: linear-gradient(90deg, #4b90ff, #ff5546); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Friend</span></div>
-        <div class="subtitle">Where should we start?</div>
+        <div class="greeting-line1">Hi <span class="highlight-name">MURTADA</span>-</div>
+        <div class="greeting-line2">Where should we start?</div>
+        
+        <div class="suggestions">
+            <div class="chip yellow" onclick="sendMessage('Create a creative image')">
+                <i class="fas fa-image"></i> Create image
+            </div>
+            <div class="chip blue" onclick="sendMessage('Create a short video script')">
+                <i class="fas fa-video"></i> Create a video
+            </div>
+            <div class="chip green" onclick="sendMessage('Write a blog post')">
+                <i class="fas fa-file-alt"></i> Write anything
+            </div>
+            <div class="chip red" onclick="sendMessage('Help me learn Python')">
+                <i class="fas fa-book"></i> Help me learn
+            </div>
+        </div>
     </div>
 
     <div id="chat-container"></div>
@@ -208,7 +202,7 @@
         <button class="plus-btn" id="fileBtn">+</button>
         <input type="file" id="fileInput" accept="image/*" style="display: none;">
         
-        <input type="text" id="textInput" placeholder="Type a message..." autocomplete="off">
+        <input type="text" id="textInput" placeholder="Ask Gemini" autocomplete="off">
         
         <button class="action-btn" id="micBtn"><i class="fas fa-microphone"></i></button>
         <button class="action-btn" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
@@ -229,19 +223,15 @@
         let isFirstMessage = true;
         let currentImageBase64 = null;
 
-        // منطق إظهار زر الإرسال (الحل للمشكلة السابقة)
+        // تبديل زر الإرسال والمايك
         textInput.addEventListener('input', () => {
-            const hasText = textInput.value.trim().length > 0;
-            if (hasText) {
-                micBtn.style.display = 'none';
-                sendBtn.style.display = 'flex';
+            if (textInput.value.trim().length > 0) {
+                micBtn.style.display = 'none'; sendBtn.style.display = 'flex';
             } else {
-                micBtn.style.display = 'flex';
-                sendBtn.style.display = 'none';
+                micBtn.style.display = 'flex'; sendBtn.style.display = 'none';
             }
         });
 
-        // إدارة الصور
         fileBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -251,23 +241,15 @@
                     currentImageBase64 = event.target.result;
                     previewImage.src = currentImageBase64;
                     previewContainer.style.display = 'block';
-                    // عند رفع صورة، نظهر زر الإرسال فوراً
-                    micBtn.style.display = 'none';
-                    sendBtn.style.display = 'flex';
+                    micBtn.style.display = 'none'; sendBtn.style.display = 'flex';
                 };
                 reader.readAsDataURL(file);
             }
         });
 
         removeFileBtn.addEventListener('click', () => {
-            currentImageBase64 = null;
-            fileInput.value = "";
-            previewContainer.style.display = 'none';
-            // إعادة زر المايك إذا لم يكن هناك نص
-            if (textInput.value.trim().length === 0) {
-                micBtn.style.display = 'flex';
-                sendBtn.style.display = 'none';
-            }
+            currentImageBase64 = null; fileInput.value = ""; previewContainer.style.display = 'none';
+            if (textInput.value.trim().length === 0) { micBtn.style.display = 'flex'; sendBtn.style.display = 'none'; }
         });
 
         function hideWelcome() {
@@ -282,28 +264,17 @@
             if (!text && !currentImageBase64) return;
             hideWelcome();
 
-            // عرض رسالة المستخدم
             const userDiv = document.createElement('div');
             userDiv.classList.add('message', 'user-message');
             userDiv.textContent = text;
-            
-            // عرض الصورة المرسلة داخل الشات بشكل جميل
             if (currentImageBase64) {
-                const img = document.createElement('img');
-                img.src = currentImageBase64;
-                img.classList.add('chat-image');
+                const img = document.createElement('img'); img.src = currentImageBase64; img.style.maxWidth = '100%'; img.style.marginTop='10px'; img.style.borderRadius='10px';
                 userDiv.appendChild(img);
             }
-            chatContainer.appendChild(userDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+            chatContainer.appendChild(userDiv); chatContainer.scrollTop = chatContainer.scrollHeight;
 
             const payload = { message: text || "وصف الصورة", image: currentImageBase64 };
-
-            // تنظيف
-            textInput.value = '';
-            currentImageBase64 = null;
-            previewContainer.style.display = 'none';
-            fileInput.value = '';
+            textInput.value = ''; currentImageBase64 = null; previewContainer.style.display = 'none'; fileInput.value = '';
             micBtn.style.display = 'flex'; sendBtn.style.display = 'none';
 
             try {
@@ -317,50 +288,32 @@
                 const botDiv = document.createElement('div');
                 botDiv.classList.add('message', 'bot-message');
                 botDiv.innerHTML = marked.parse(data.reply);
-                chatContainer.appendChild(botDiv);
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-
-                // النطق
+                chatContainer.appendChild(botDiv); chatContainer.scrollTop = chatContainer.scrollHeight;
+                
                 const cleanText = data.reply.replace(/[*#`_]/g, ''); 
-                speak(cleanText);
+                const u = new SpeechSynthesisUtterance(cleanText);
+                u.lang = /[\u0600-\u06FF]/.test(cleanText) ? 'ar-SA' : 'en-US';
+                window.speechSynthesis.speak(u);
 
             } catch (error) {
                 const errDiv = document.createElement('div');
                 errDiv.classList.add('message', 'bot-message');
-                errDiv.textContent = "Error connecting to server.";
+                errDiv.textContent = "حدث خطأ بسيط، حاول مرة أخرى.";
                 chatContainer.appendChild(errDiv);
             }
         }
 
         sendBtn.addEventListener('click', () => sendMessage(textInput.value));
         textInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(textInput.value); });
-
-        // إعدادات الصوت
+        
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = 'ar-SA'; // يمكنك تغييره حسب الرغبة
-
+        recognition.lang = 'en-US';
         micBtn.addEventListener('click', () => {
-            hideWelcome();
-            window.speechSynthesis.cancel();
-            if (micBtn.classList.contains('recording')) recognition.stop();
-            else recognition.start();
+            if (micBtn.classList.contains('recording')) recognition.stop(); else recognition.start();
         });
-
         recognition.onstart = () => micBtn.classList.add('recording');
         recognition.onend = () => micBtn.classList.remove('recording');
-        recognition.onresult = (e) => {
-            const transcript = e.results[0][0].transcript;
-            textInput.value = transcript;
-            sendMessage(transcript);
-        };
-
-        function speak(text) {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = /[\u0600-\u06FF]/.test(text) ? 'ar-SA' : 'en-US';
-            window.speechSynthesis.speak(u);
-        }
+        recognition.onresult = (e) => { textInput.value = e.results[0][0].transcript; sendMessage(textInput.value); };
     </script>
 </body>
 </html>
- 
