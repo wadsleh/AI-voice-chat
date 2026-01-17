@@ -4,15 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MVC AI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
+        /* --- ألوان Gemini الأصلية --- */
+        :root {
+            --bg-color: #131314;       /* أسود Gemini */
+            --user-bubble: #303134;    /* رمادي رسالة المستخدم */
+            --text-primary: #E3E3E3;   /* لون النص الأساسي */
+            --text-secondary: #C4C7C5; /* لون نص ثانوي */
+            --accent-blue: #A8C7FA;    /* أزرق فاتح للروابط والأيقونات */
+        }
+
         body {
-            background-color: #121212;
-            color: #E0E0E0;
-            font-family: 'Cairo', 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Roboto', 'Cairo', sans-serif; /* Roboto للإنجليزية، Cairo للعربية */
             margin: 0;
             display: flex;
             flex-direction: column;
@@ -20,34 +29,32 @@
             overscroll-behavior: none;
         }
 
-        /* تنسيق الهيدر */
+        /* --- الهيدر الاحترافي (نظيف جداً) --- */
         header {
-            padding: 12px 20px;
-            background: #1E1E1E;
-            border-bottom: 1px solid #333;
+            padding: 15px 20px;
+            background: var(--bg-color); /* نفس لون الخلفية لدمج الهيدر */
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 15px;
+            justify-content: center; /* توسيط العناصر */
+            gap: 12px;
+            /* إزالة الخط السفلي ليكون الشكل انسيابياً */
+            /* border-bottom: 1px solid #333; */ 
         }
 
         .logo-img {
-            height: 45px;
+            height: 32px; /* حجم أيقونة التطبيقات القياسي */
             width: auto;
             object-fit: contain;
-            /* فلتر بسيط لإبراز اللوغو */
-            filter: drop-shadow(0 0 2px rgba(255,255,255,0.1)); 
         }
 
         .brand-name {
-            font-size: 1.4rem;
-            font-weight: 900;
-            background: linear-gradient(90deg, #4b90ff, #00d4ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 1px;
+            font-size: 1.25rem;
+            font-weight: 500; /* خط متوسط السمك (ليس عريضاً جداً) */
+            color: var(--text-primary); /* أبيض هادئ بدلاً من التدرج الفاقع */
+            letter-spacing: 0.5px;
         }
 
+        /* --- منطقة الشات --- */
         #chat-container {
             flex: 1;
             padding: 20px;
@@ -55,64 +62,122 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 25px; /* مسافة أكبر بين الرسائل للراحة البصرية */
         }
 
         .message {
-            max-width: 85%;
-            padding: 12px 18px;
-            border-radius: 18px;
+            max-width: 90%;
             line-height: 1.6;
             font-size: 1rem;
             position: relative;
         }
 
-        .user-message { align-self: flex-end; background-color: #2C2C2C; color: #fff; border-bottom-right-radius: 4px; }
-        .bot-message { align-self: flex-start; background: #0056b3; color: #fff; border-bottom-left-radius: 4px; }
+        /* 1. رسالة المستخدم (كبسولة رمادية) */
+        .user-message {
+            align-self: flex-end;
+            background-color: var(--user-bubble);
+            color: var(--text-primary);
+            padding: 12px 20px;
+            border-radius: 20px 20px 4px 20px; /* تدوير الحواف بستايل عصري */
+        }
 
-        /* تنسيقات Markdown */
-        .bot-message h1, .bot-message h2 { color: #ffca28; margin: 10px 0 5px; }
-        .bot-message ul, .bot-message ol { padding-right: 20px; margin: 5px 0; }
-        .bot-message li { margin-bottom: 5px; }
-        .bot-message strong { color: #82b1ff; font-weight: bold;}
-        .bot-message code { background: #00000050; padding: 2px 5px; border-radius: 4px; font-family: monospace; color: #ff80ab; }
-        .bot-message pre { background: #121212; padding: 10px; border-radius: 10px; overflow-x: auto; border: 1px solid #444; }
+        /* 2. رسالة البوت (شفافة + أيقونة) - ستايل Gemini الحقيقي */
+        .bot-message {
+            align-self: flex-start;
+            background: transparent; /* إزالة الخلفية الزرقاء */
+            color: var(--text-primary);
+            padding: 0; /* لا حشوة لأن الخلفية شفافة */
+            padding-right: 10px;
+        }
 
+        /* إضافة أيقونة "النجمة" بجانب رسالة البوت */
+        .bot-message::before {
+            content: '✨'; /* أيقونة Gemini */
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 1.2rem;
+            vertical-align: top;
+        }
+
+        /* --- تنسيق النصوص داخل الرسالة (Markdown) --- */
+        .bot-message strong { color: #fff; font-weight: 700; }
+        .bot-message h1, .bot-message h2 { color: var(--accent-blue); margin-top: 15px; font-size: 1.1rem; }
+        .bot-message code { background: #1E1F20; padding: 2px 6px; border-radius: 4px; font-family: monospace; color: #A8C7FA; }
+        .bot-message pre { background: #1E1F20; padding: 15px; border-radius: 12px; overflow-x: auto; border: 1px solid #444; margin-top: 10px; }
+        .bot-message ul { padding-right: 20px; color: var(--text-secondary); }
+
+        /* --- شريط الكتابة الطافي --- */
         #input-area {
             position: fixed;
             bottom: 30px;
             left: 15px;
             right: 15px;
-            background-color: #1E1E1E;
+            background-color: #1E1F20; /* لون أفتح قليلاً من الخلفية */
             border-radius: 50px;
-            padding: 8px 12px;
+            padding: 8px 10px;
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-            border: 1px solid #333;
+            border: none; /* إزالة الحدود */
+            /* ظل ناعم جداً */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
             z-index: 1000;
         }
 
-        #textInput { flex: 1; background: transparent; border: none; color: white; font-size: 1rem; padding: 10px; outline: none; }
-        #langBtn { background: #333; color: #fff; border: 1px solid #555; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
-        .action-btn { width: 45px; height: 45px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-        #micBtn { background: #2C2C2C; color: #fff; }
-        #micBtn.recording { background: #ff4d4d; animation: pulse 1.5s infinite; }
-        #sendBtn { background: #4b90ff; color: white; display: none; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.4); } 100% { box-shadow: 0 0 0 15px rgba(255, 77, 77, 0); } }
+        #textInput { 
+            flex: 1; 
+            background: transparent; 
+            border: none; 
+            color: var(--text-primary); 
+            font-size: 1rem; 
+            padding: 10px; 
+            outline: none; 
+        }
+
+        #langBtn { 
+            background: transparent; 
+            color: var(--text-secondary); 
+            border: 1px solid #444; 
+            padding: 6px 10px; 
+            border-radius: 15px; 
+            font-size: 0.75rem; 
+            font-weight: bold; 
+            cursor: pointer; 
+        }
+
+        .action-btn { 
+            width: 42px; 
+            height: 42px; 
+            border-radius: 50%; 
+            border: none; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 1.2rem; 
+            transition: 0.2s;
+        }
+        
+        /* أزرار بيضاء/رمادية مثل Gemini */
+        #micBtn { background: var(--text-primary); color: var(--bg-color); }
+        #micBtn.recording { background: #ff4d4d; color: white; animation: pulse 1.5s infinite; }
+        
+        #sendBtn { background: var(--accent-blue); color: var(--bg-color); display: none; }
+
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.4); } 100% { box-shadow: 0 0 0 10px rgba(255, 77, 77, 0); } }
     </style>
 </head>
 <body>
 
     <header>
-        <img src="images/logo.png" alt="MVC AI Logo" class="logo-img" onerror="this.style.display='none'"> 
+        <img src="images/logo.png" alt="MVC AI" class="logo-img" onerror="this.style.display='none'"> 
         <span class="brand-name">MVC AI</span>
     </header>
 
     <div id="chat-container">
         <div class="message bot-message">
-            مرحباً! أنا جاهز للتحدث معك. اضغط على المايك وابدأ الكلام. 🎙️
+            مرحباً! أنا MVC AI.<br>
+            كيف يمكنني مساعدتك اليوم؟
         </div>
     </div>
 
@@ -134,7 +199,7 @@
         langBtn.addEventListener('click', () => {
             if (currentLang === 'ar-SA') {
                 currentLang = 'en-US'; langBtn.textContent = 'EN';
-                textInput.placeholder = "Type your message..."; textInput.dir = "ltr";
+                textInput.placeholder = "Message MVC AI..."; textInput.dir = "ltr";
                 recognition.lang = 'en-US';
             } else {
                 currentLang = 'ar-SA'; langBtn.textContent = 'AR';
@@ -161,7 +226,6 @@
                 });
                 const data = await response.json();
                 addMessage(data.reply, 'bot');
-                // تنظيف الرموز قبل النطق
                 const cleanText = data.reply.replace(/[*#`_]/g, ''); 
                 speak(cleanText);
             } catch (error) {
@@ -187,8 +251,14 @@
 
         function addMessage(text, sender) {
             const div = document.createElement('div');
+            // لا حاجة لتغيير الكلاسات، الـ CSS الجديد سيتولى التنسيق
             div.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
-            if (sender === 'user') { div.textContent = text; } else { div.innerHTML = marked.parse(text); }
+            
+            if (sender === 'user') { 
+                div.textContent = text; 
+            } else { 
+                div.innerHTML = marked.parse(text); 
+            }
             chatContainer.appendChild(div); chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
