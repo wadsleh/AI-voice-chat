@@ -11,8 +11,8 @@ app.use(express.static('public'));
 const HF_TOKEN = process.env.HF_TOKEN;
 
 
-// سنستخدم موديل Qwen لأنه ممتاز في العربية
-const MODEL_URL = "https://api-inference.huggingface.co/models/Qwen/Qwen2.5-7B-Instruct";
+// استخدام موديل Mistral المستقر جداً
+const MODEL_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3";
 
 app.post('/api/chat', async (req, res) => {
   try {
