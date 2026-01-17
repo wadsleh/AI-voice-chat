@@ -71,6 +71,7 @@ function speak(text) {
     utterance.lang = "ar-SA"; // ضبط اللغة عربية
     utterance.rate = 1.0;     // سرعة طبيعية
 
-    // تشغيل الكلام الجديد
-    window.speechSynthesis.speak(utterance);
+    // داخل دالة تشغيل المايك
+window.speechSynthesis.cancel(); // اسكت عشان أقدر أتكلم أنا
+
 }
